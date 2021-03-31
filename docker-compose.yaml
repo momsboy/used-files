@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db_mywpblog:
+    image: mysql:5.7
+    ports:
+      - 3310:3306
+    networks:
+      - wp_network
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: momar
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress_mywpblog:
+    depends_on:
+      - db_mywpblog
+    image: wordpress:5.1.1-php7.3-apache
+    ports:
+      - "8112:80"
+    networks:
+      - wp_network
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db_mywpblog:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    working_dir: /var/www/html
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  wp_network:
